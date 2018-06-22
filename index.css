@@ -1,0 +1,214 @@
+/* horizontal scroll bar is awful and very disturbing */
+body {
+	overflow-x: hidden;
+}
+
+/* default border sux */
+* {
+	padding: none;
+	border: none;
+	margin: 0px;
+}
+/* a period symbol (.) applies the css for the elements belonging to given class */
+.control-btn {
+	/* if height = width, border-radius >= 50% will yield a circular button else elliptical button */
+	border-radius: 50%; 
+	/*because after the 12th mentee, the mentee-cards will be over this button effectively making it inaccessible */
+	z-index: 1; 
+	/* position is fixed at the bottom right corner */
+	position: fixed; 
+	/* specifies the distance of the location of the button from browser's left boundary */
+	bottom: 50px; 
+	/* height and width of the button */
+	/* equal height and width is req for making a circular button */
+	height: 50px; 
+	width: 50px; 
+	/* shadow for the element */ /* look up the syntax for box-shadow */
+	box-shadow: 5px 5px 5px 0 grey; 
+	font-size: 30px;
+}
+/* :hover is called a CSS Selector, CSS Selectors are used to trigger a styling when the condition is satisfied */
+/* :hover CSS Selector applies this piece of CSS code when we hover the mouse over the elements belonging to the mentioned class */
+.control-btn:hover {
+	cursor: pointer;
+	/* animating color change effect */
+	transition: background-color .1s; /* for microsoft IE */
+	-o-transition: background-color .1s; /* for opera */
+	-moz-transition: background-color .1s; /* for Mozilla Firefox */
+	-webkit-transition: background-color .1s; /* for Google-Chrome and Safari */
+}
+/* a pound symbol applies the css for the element with the given id. In this case it is the add button */
+#addNewMenteeButton {
+	right: 50px; /* specifies the distance of the location of the button from browser's bottom boundary */
+	background-color: steelblue;
+}
+#addNewMenteeButton:hover {
+	background-color: springgreen; /* bg change on hover */
+}
+#deleteAllButton {
+	left: 50px;
+	background-color: orange;
+}
+#deleteAllButton:hover {
+	background-color: red;
+}
+#sortButton {
+	right: calc(50% - 25px);
+	background-color: darkseagreen;
+}
+#sortButton:hover {
+	background-color: darkturquoise;
+}
+.mentee-card {
+	border: 2px solid black;
+	/* maximum height is set to 70px to make the card look minimized by default */
+	max-height: 70px; 
+	/* because there's a restriction on height set by 'max-height' property, the 'textarea' element will overflow by default. */
+	/* removing it will make the textarea visible but will look like being outside the card itself because 'max-height' restricts the 
+	   height of the card (div.metee-card) to 70px if it's height exceeds */
+	overflow: hidden;
+	/* each card has the specified margin to just to have spacing b/w each card */
+	/* the reason why top and bottom margin is set to half of req is because vertical margin adds up whereas horizontal margin overlap */
+	margin: 5px 10px 5px 10px;
+	/* <div> is inline by default meaning its size is decided by its contents. other egs: <a>, <button>*/
+	/* a block element occupies whole of the horizontal space irrespective of its content. eg: <p>, <h1> to <h6> */
+	/* 'inline-block' is inbetween these two, its size can be manually set */
+	display: inline-block;
+	/* width of the card adjusts with browser resize */
+ 	/* 100% means the whole length of its parent's width (which in this case is 'body' which implies the browser width) */
+ 	/* i wanted a small gap between the card's right boundary and the browser's boundary, so the 20px */
+ 	/* calc is just a math fn used for arithetic calculation of numbers with different units */
+ 	width: calc(100% - 20px); 
+ 	/* for rounder corners */
+	border-radius: 10px; 
+	background-color: lightgrey;
+	/* for animating the maximizing and minimizing effect */
+	transition: max-height .75s;
+	-o-transition: max-height .75s;
+	-moz-transition: max-height .75s;
+	-webkit-transition: max-height .75s;
+}
+.mentee-card:hover {
+	box-shadow: 6px 6px 6px 0 grey;
+	/* animation of shadow */
+	transition: box-shadow .3s;
+	-o-transition: box-shadow .3s;
+	-moz-transition: box-shadow .3s;
+	-webkit-transition: box-shadow .3s;
+	/* 'height' is not and animatable porperty, but 'max-height' can be animated. */
+	/* when the max height changes (during maximizing the card), the height of the card will change because of the text area */
+	/* initially when the max-height is set to 70px the <textarea> is not rendered on screen but is still present */
+	transition: max-height .75s;
+	-o-transition: max-height .75s;
+	-moz-transition: max-height .75s;
+	-webkit-transition: max-height .75s;
+}
+/* titlebar holds the mentee's name */
+.card-titlebar {
+	/* has a margin on all 4 sides */
+	margin: 10px 8px 10px 10px;
+	border: 2px solid black;
+	/* in default scenario the title bar will be as big as the name, if inline-block the size can be manually set */
+	display: inline-block;
+	/* card is 70px in height (i.e max-height), with 10px margin on either side 50px is the req dim to center align the titlebar */
+	height: 46px; 
+	/* similar reasoning as that of the card, there are 3 buttons each 50px in size with 10px margin on each side so 210px is the req 
+	   length to prefectly fit the titlebar */ 
+	width: calc(100% - 200px); 
+	/* default color is darkgrey but will change with rating */
+	/* fun-fact : darkgrey is a lighter shade than grey :) */
+	background-color: darkgrey;  
+	/* to horizontally center align the name */
+	text-align: center; 
+	/* to vertically center align the name */
+	/* when line height = height it aligns vertically in the center */
+	line-height: 46px; 
+	/* to avoid overflow of the name out of titlebar when browser width is too less or the name is too long.*/
+	overflow: hidden; 
+	font-size: 25px;
+	border-radius: 10px;
+}
+.card-titlebar:hover {
+	cursor: default;
+}
+.card-textarea {
+	border: 2px solid black;
+	/* i dont want the user to manually control the size of the text area */
+	resize: none; 
+	/* as said earlier the top and bottom margin add on so are set to 0px as the titlebar has the margin */
+	margin: 0px 10px 0px 10px;
+	height: 258px; 
+	width: calc(100% - 25px);
+	border-radius: 5px;
+	background-color: darkgrey;
+	font-size: 15px;
+}
+.card-btn {
+	border: 2px solid black;
+	/* i want the delete button to be positioned at the right-most end */
+	/* position: absolute means relative to the positioned nearest ancestor, in this case it's the parent */
+	margin: 10px 8px 10px 0px;
+	font-size: 30px;
+	height: 50px;
+	width: 50px;
+	border-radius: 10px;	
+}
+.card-btn:hover {
+	cursor: pointer;
+}
+.delete-card-discard-changes-btn {
+	position: absolute;
+	right: 10px; 	
+	background-color: darkgrey;
+}
+.delete-card-discard-changes-btn:hover {
+	color: red; 
+	/* on hover the button becomes red */	
+	transition: color .1s;
+	-o-transition: color .1s;
+	-moz-transition: color .1s;
+	-webkit-transition: color .1s;	
+}
+.edit-card-save-changes-btn {
+	position: absolute;
+	right: 70px; 	
+	background-color: darkgrey;
+}
+.edit-card-save-changes-btn:hover {
+	color: green;
+	transition: color .1s;
+	-o-transition: color .1s;
+	-moz-transition: color .1s;
+	-webkit-transition: color .1s;	
+}
+.maximize-minimize-card-btn {
+	position: absolute;
+	right: 130px; 	
+	background-color: darkgrey;
+}
+.maximize-minimize-card-btn:hover {
+	color: steelblue;
+	transition: color .1s;
+	-o-transition: color .1s;
+	-moz-transition: color .1s;
+	-webkit-transition: color .1s;	
+}
+/* to center align the stars */
+/* the reason why i included text area inside this div is because i wanted the stars to be center aligned within the card, if only 
+   the stars were inside it, the stars would be pushed to left end on the next line cuz div is an inline element (width depends on its 
+   children) and the center align property wont make any sense. so adding <textarea> makes the div's width = <textarea> width. */
+.editable-content {
+	text-align: center;
+	font-size: 40px;
+}
+/* when hovered over an element of the class 'rating-stars', apply this css to all it's children belonging to the class 'rating-star' */
+.rating-stars:hover .rating-star {
+	color: steelblue;
+	cursor: pointer;
+}
+/* what this does is, when we hover over an element of class 'rating-star' it applies this css to all the elder siblings of the class 
+   'rating-star'. i want to light up all the stars before the one being pointed at, so i light up all the stars when hovered over the
+   parent using the previous css code and darken all the other succeeding stars using this css */
+.rating-star:hover ~ .rating-star {
+	color: black;
+}
