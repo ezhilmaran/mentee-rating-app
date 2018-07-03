@@ -292,6 +292,7 @@ function deleteAll() {
 }
 
 function sort() {
+	alert("sorting functionality not yet added");
 /*
 	// temp array for sorting
 	var sorted_mentee_name_list = [];
