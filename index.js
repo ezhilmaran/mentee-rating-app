@@ -118,7 +118,7 @@ function MAXIMIZEorMINIMIZEcard(min_max_btn) {
 
 	if (min_max_btn.title == "Maximize Card") {
 		// increasing the card max-height, this allows the textarea to be visible
-		min_max_btn.parentNode.style.maxHeight = "345px"; 
+		min_max_btn.parentNode.style.maxHeight = "335px"; 
 		// hex code for minimize symbol
 		min_max_btn.innerHTML = "&#x1f5d5;"; 
 		min_max_btn.title = "Minimize Card";
@@ -171,7 +171,7 @@ function EDITorSAVE(edit_save_btn) {
 		edit_save_btn.innerHTML = "&#x270E;"; 
 		edit_save_btn.title = "Edit Card";
 		// increasing the card max-height, this allows the rating stars to be visible
-		card.style.maxHeight = "345px"; 
+		card.style.maxHeight = "335px"; 
 		// hex code for minimize symbol
 		min_max_btn.innerHTML = "&#x1f5d5;"; 
 		min_max_btn.title = "Minimize Card";
@@ -233,7 +233,7 @@ function DELETEorDISCARD(delete_discard_btn) {
 			card.style.backgroundColor = "lightgrey";
 		}
 		// increasing the card max-height, this allows the rating stars to be visible
-		card.style.maxHeight = "345px"; 
+		card.style.maxHeight = "335px"; 
 		// hex code for Multiplication (cross) symbol
 		delete_discard_btn.innerHTML = "&#x2715;";
 		delete_discard_btn.title = "Delete Card";
