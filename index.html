@@ -7,8 +7,8 @@
 	<link rel="stylesheet" type="text/css" href="./index.css">
 </head>
 	<body style="background-color: beige;">
-		<div id="cardContainer"></div>
-		<button id="addNewMenteeButton" class="control-btn" title="Add New Mentee" onclick="addNewMentee()">+</button>
+		<div id="cardContainer" class="card-container" onclick="collapseAllCards(event)"></div>
+		<button id="addNewMenteeButton" class="control-btn" title="Add New Mentee" onclick="addNewMentee()">&#x2795;</button>
 		<button id="deleteAllButton" class="control-btn" title="Delete All Mentees" onclick="deleteAll()">&#x1F5D1;</button>
 		<button id="sortButton" class="control-btn" title="Sort based on Rating" onclick="sort()">&#x21C5;</button>
 		<!-- external js script -->

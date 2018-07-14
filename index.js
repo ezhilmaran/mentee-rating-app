@@ -1,27 +1,42 @@
 /* to avoid typos becoming a variable, cuz in js a non-keyword without a declaration is also considered a variable
    eg : var x = 5; is same as just x = 5; */
 'use strict'
+// card dimensions
+var cardDimension = {
+	collapsed_height: "70px",
+	expanded_height: "335px", 
+	edit_mode_height: "400px"
+};
+// HTML entities
+var glyphicon = {
+	minimize:"&#x1f5d5;",
+	maximize:"&#x26F6;",
+	edit:"&#x270E;",
+	save:"&#x2713;",
+    delete:"&#x2715;",
+	discard:"&#x2717;",
+	pin:"&#x1f4cc;"
+};
 
-var rating_colors = ["#cd3333","#ff7d4d","#ffd365","#c2c264","#70b234"]; // color of card for every rating
-
-// info is obtained from localStorage on start or refresh
+var rating_comment = ["Note Yet Rated","Poor","Below Average","Average","Good","Very Good"]; 
+ // color of card for every rating
+var rating_colors = ["lightgrey","#cd3333","#ff7d4d","#ffd365","#c2c264","#70b234"];
+// namelist is obtained from localStorage on start or refresh
 var mentee_name_list = localStorage.getItem("mentee_name_list");
 
-/* should create cards everytime for saved mentees everytime on refresh */
-if (mentee_name_list === null) { /* if no such item exist*/
+/* cards should be created for saved mentees on start or refresh */
+if (mentee_name_list === null || mentee_name_list === "") {
 	// initialize it to an empty array
 	mentee_name_list = []; 
 } else { 
 	// converting mentee_name_list string to array 
 	mentee_name_list = mentee_name_list.split(","); 
 	for (var i = 0 ; i < mentee_name_list.length ; i++) {
-		/* creating cards by adding a div to the DOM */
+		/* creating cards for mentees in the namelist */
 		createCard(mentee_name_list[i],localStorage.getItem(mentee_name_list[i])); 
 	}
 }
-/* when a new card is added a div.mentee-card (this is the way of representing a tag belonging to a class) is added to the body with a 
-   div.card-titlebar as it's 1st child holding the mentees name and his rating, 3 buttons with proper html entity as its text node, a 
-   textarea to hold the review and stars to register mentee's rating */
+
 function addNewMentee() {
 	var mentee_name = prompt("Enter Mentee Name");
 
@@ -33,6 +48,7 @@ function addNewMentee() {
 		for (var i = mentee_name_list.length-1; i >= 0; i--) {
 			if (mentee_name == mentee_name_list[i]) {
 				name_unique = false;
+				break;
 			}
 		}
 		if (name_unique) {
@@ -44,7 +60,7 @@ function addNewMentee() {
 			localStorage.setItem(mentee_name,'{"rating_value":"0","review":""}'); 
 			// creating a card for the mentee
 			createCard(mentee_name,'{"rating_value":"0","review":""}'); 
-		} else {
+		} else { // name's not unique
 			alert("Mentee Already Exist");
 		}
 	} else {
@@ -55,77 +71,101 @@ function addNewMentee() {
 function createCard(mentee_name,card_info) {
 	// look into JSON
 	card_info = JSON.parse(card_info);
-	document.getElementById("cardContainer").innerHTML += "<div id='" + mentee_name + "' class='mentee-card'>\
+	// the card div also belongs to the class equivalent to the rating of the card i.e 0 to 5
+	document.getElementById("cardContainer").innerHTML += "<div id='" + mentee_name + "' class='mentee-card " + card_info.rating_value + "'>\
+																<button class='pin-card-btn' title='Pin Card' onclick='PINorUNPINcard(this)' onmouseover='prepareToPINcard(this)' onmouseout='reversePINPreparation(this)'>" + glyphicon.pin + "</button>\
 																<div class='card-titlebar'>" + mentee_name + " &#x2012\
-																	<span class='rated-stars'>\
-																		<span id='rated-star-1' class='rated-star' title='Poor'>&#x2605\
-																		</span>\
-																		<span id='rated-star-2' class='rated-star' title='Below Average'>&#x2605\
-																		</span>\
-																		<span id='rated-star-3' class='rated-star' title='Average'>&#x2605\
-																		</span>\
-																		<span id='rated-star-4' class='rated-star' title='Good'>&#x2605\
-																		</span>\
-																		<span id='rated-star-5' class='rated-star' title='Very Good'>&#x2605\
-																		</span>\
+																	<span class='rated-stars' title='Note Yet Rated'>\
+																		<span class='rated-star star-1'>&#x2605</span>\
+																		<span class='rated-star star-2'>&#x2605</span>\
+																		<span class='rated-star star-3'>&#x2605</span>\
+																		<span class='rated-star star-4'>&#x2605</span>\
+																		<span class='rated-star star-5'>&#x2605</span>\
 																	<span/>\
-																	<span id='0' class='rating-value'></span>\
 																</div>\
-																<button class='maximize-minimize-card-btn card-btn' title='Maximize Card' onclick='MAXIMIZEorMINIMIZEcard(this)'>&#x26F6;\
-																</button>\
-																<button class='edit-card-save-changes-btn card-btn' title='Edit Card' onclick='EDITorSAVE(this)'>&#x270E;\
-																</button>\
-																<button class='delete-card-discard-changes-btn card-btn' title='Delete Card' onclick='DELETEorDISCARD(this)'>&#x2715;\
-																</button>\
+																<button class='maximize-minimize-card-btn card-btn' title='Maximize Card' onclick='MAXIMIZEorMINIMIZEcard(this)'>&#x26F6;</button>\
+																<button class='edit-card-save-changes-btn card-btn' title='Edit Card' onclick='EDITorSAVE(this)'>&#x270E;</button>\
+																<button class='delete-card-discard-changes-btn card-btn' title='Delete Card' onclick='DELETEorDISCARD(this)'>&#x2715;</button>\
 																<div class='editable-content'>\
-																	<textarea class='card-textarea' readOnly>" + card_info.review + "\
-																	</textarea>\
+																	<textarea class='card-textarea' readOnly>" + card_info.review + "</textarea>\
 																	<span class='rating-stars' onclick='registerRating(event)'>\
-																		<span id='rating-star-1' class='rating-star' title='Poor'>&#x2605\
-																		</span>\
-																		<span id='rating-star-2' class='rating-star' title='Below Average'>&#x2605\
-																		</span>\
-																		<span id='rating-star-3' class='rating-star' title='Average'>&#x2605\
-																		</span>\
-																		<span id='rating-star-4' class='rating-star' title='Good'>&#x2605\
-																		</span>\
-																		<span id='rating-star-5' class='rating-star' title='Very Good'>&#x2605\
-																		</span>\
+																		<span class='rating-star star-1' title='Poor' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
+																		<span class='rating-star star-2' title='Below Average' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
+																		<span class='rating-star star-3' title='Average' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
+																		<span class='rating-star star-4' title='Good'  onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
+																		<span class='rating-star star-5' title='Very Good' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
 																	</span>\
 																</div>\
-														   </div>"; 
-	/* 'this' keyword returns the respective node and can be used for further manipulation */
-	/* onclick is an attribute the calls the function when the resp node is clicked */
+														   </div>";
 	var card = document.getElementById(mentee_name);
-	// rating_value = 0 => not yet rated, lightgrey color
-	if (card_info.rating_value !== "0") {
-		// coloring the stars
-		for (var i=card_info.rating_value,s=card.firstElementChild.firstElementChild.firstElementChild; i > 0; i--, s=s.nextElementSibling) {
-			s.style.color = "chocolate" ;
-		}
-		// updating the bg to respective color
-		card.style.backgroundColor = rating_colors[card_info.rating_value-1];
+	// coloring the stars
+	for (var i=card_info.rating_value,s=card.children[1].firstElementChild.firstElementChild; i > 0; i--, s=s.nextElementSibling) {
+		s.style.color = "chocolate" ;
 	}
-	// the span.rating-value is what i use to obtain the rating of the card while saving
-	// ofc i can get the rating from the number of stars colored, but doing that is just a waste of time
-	// i also tried getting the rating_value from bg of the card, but JS DOM backgroundColor return format is not consistent
-	// so i added a span with no textNode, just to reflect the rating_value of the card
+	// updating the bg to respective color
+	card.style.backgroundColor = rating_colors[card_info.rating_value];
+	card.children[1].firstElementChild.title = rating_comment[card_info.rating_value];
+}
 
-	card.firstElementChild.lastElementChild.id = card_info.rating_value;
-}						
+function collapseAllCards(event) {
+	// user either shouldn't click on any card (i.e clicks cardContainer) or click on any of the card
+	var targetElement = event.target,card;
+	if(targetElement.classList[0] != "card-container") {
+		// obtaining the reference of the card that was clicked on
+		while (targetElement.classList[0] != "mentee-card") {
+			 targetElement = targetElement.parentNode;
+		}
+		card = targetElement;
+	}
+	// to collapse the expanded cards
+	var cardContainer = document.getElementById("cardContainer");
+	for (var i = 0; i < mentee_name_list.length; i++) {
+		// collapsing the expanded cards that are not pinned
+		if (cardContainer.children[i].style.maxHeight == cardDimension.expanded_height && cardContainer.children[i] != card && cardContainer.children[i].children[0].title != "Unpin Card") {
+			// collapsing the card
+			cardContainer.children[i].style.maxHeight = cardDimension.collapsed_height;
+			// modifying their max_min_btn
+			cardContainer.children[i].children[2].innerHTML = glyphicon.maximize;
+			cardContainer.children[i].children[2].title = "Maximize Card";		
+		}
+	}
+}
+
+function PINorUNPINcard(pin_btn) {
+	if (pin_btn.title == "Pin Card") {
+		pin_btn.title = "Unpin Card";
+		pin_btn.style.backgroundColor = "mediumpurple";
+	} else {
+		pin_btn.title = "Pin Card";
+		pin_btn.style.backgroundColor = "gray";
+	}
+}	
+function prepareToPINcard(pin_btn) {
+	if (pin_btn.title == "Pin Card") {
+		pin_btn.style.backgroundColor = "mediumpurple";
+	}
+}	
+function reversePINPreparation(pin_btn) {
+	if (pin_btn.title == "Pin Card") {
+		pin_btn.style.backgroundColor = "gray";
+	}
+}				
+
 
 function MAXIMIZEorMINIMIZEcard(min_max_btn) {
+	var card = min_max_btn.parentNode;
 
 	if (min_max_btn.title == "Maximize Card") {
 		// increasing the card max-height, this allows the textarea to be visible
-		min_max_btn.parentNode.style.maxHeight = "335px"; 
+		card.style.maxHeight = cardDimension.expanded_height; 
 		// hex code for minimize symbol
-		min_max_btn.innerHTML = "&#x1f5d5;"; 
+		min_max_btn.innerHTML = glyphicon.minimize; 
 		min_max_btn.title = "Minimize Card";
+			
 	} else {
-		min_max_btn.parentNode.style.maxHeight = "70px";
+		card.style.maxHeight = cardDimension.collapsed_height;
 		// hex code for maximize symbol
-		min_max_btn.innerHTML = "&#x26F6;"; 
+		min_max_btn.innerHTML = glyphicon.maximize; 
 		min_max_btn.title = "Maximize Card";
 	}
 	
@@ -138,49 +178,45 @@ function EDITorSAVE(edit_save_btn) {
 	var review_textarea = editable_content.firstElementChild;
 	var delete_discard_btn = editable_content.previousElementSibling;
 
-	if (edit_save_btn.title == "Edit Card") {
+	if (edit_save_btn.title == "Edit Card") {		
 		// hex code for check symbol (the pencil becomes check symbol when in edit mode)
-		edit_save_btn.innerHTML = "&#x2713;"; 
+		edit_save_btn.innerHTML = glyphicon.save; 
 		edit_save_btn.title = "Save Changes";
 		// increasing the card max-height, this allows the textarea to be visible
-		card.style.maxHeight = "400px"; 
+		card.style.maxHeight = cardDimension.edit_mode_height; 
 		// hex code for minimize symbol
-		min_max_btn.innerHTML = "&#x1f5d5;"; 
+		min_max_btn.innerHTML = glyphicon.minimize; 
 		min_max_btn.title = "Minimize Card";
 		// can't minimize when in edit mode
 		min_max_btn.style.visibility = "hidden"; 
 		// when in edit mode readOnly should be set to false to make it editable
 		review_textarea.readOnly = false; 
-		// hex code for Ballot (kinda cross) symbol
-		delete_discard_btn.innerHTML = "&#x2717;"; 
+		// hex code for Ballot symbol
+		delete_discard_btn.innerHTML = glyphicon.discard; 
 		// when in edit mode this btn is used for discarding changes
 		delete_discard_btn.title = "Discard Changes"; 
 		
 	} else {
 		var card_info = {"rating_value":"0","review":""};
-		var card_titlebar = card.firstElementChild;
-		var rating_value_span = card_titlebar.lastElementChild;
-		var star = card.firstElementChild.firstElementChild.firstElementChild;
-
-		// rating_value obtained from the id of span.reting-value of the card
-		card_info.rating_value = rating_value_span.id;
+		// rating_value obtained from the className of the card
+		card_info.rating_value = card.classList.item(card.classList.length-1); // length-1 is always 1
 		card_info.review = review_textarea.value;
 		// saving the changes to localStorage
 		localStorage.setItem(card.id,JSON.stringify(card_info)); 
 		// hex code for pencil symbol
-		edit_save_btn.innerHTML = "&#x270E;"; 
+		edit_save_btn.innerHTML = glyphicon.edit; 
 		edit_save_btn.title = "Edit Card";
 		// increasing the card max-height, this allows the rating stars to be visible
-		card.style.maxHeight = "335px"; 
+		card.style.maxHeight = cardDimension.expanded_height; 
 		// hex code for minimize symbol
-		min_max_btn.innerHTML = "&#x1f5d5;"; 
+		min_max_btn.innerHTML = glyphicon.minimize; 
 		min_max_btn.title = "Minimize Card";
 		// the minimize btn is visible after editing is over
 		min_max_btn.style.visibility = "visible"; 
 		// when editing is over readOnly is set to true
 		review_textarea.readOnly = true; 
 		// hex code for Multiplication (cross) symbol
-		delete_discard_btn.innerHTML = "&#x2715;";
+		delete_discard_btn.innerHTML = glyphicon.delete;
 		delete_discard_btn.title = "Delete Card";
 	}
 }
@@ -193,7 +229,7 @@ function DELETEorDISCARD(delete_discard_btn) {
 	var review_textarea = editable_content.firstElementChild;
 
 	if (delete_discard_btn.title == "Delete Card") {
-		// making sure the the mentor is sure about deleteing the mentee
+		// making sure the the mentor is sure about deleting the mentee
 		if (confirm("Delete Mentee ?")) {
 			// removing the mentee_name from the mentee_name_list
 			for (var i = mentee_name_list.length-1; i >= 0; i--) {
@@ -213,7 +249,10 @@ function DELETEorDISCARD(delete_discard_btn) {
 	} else {
 		/* for discarding, the card should be updated with the info stored in localStorage */
 		var card_info = JSON.parse(localStorage.getItem(card.id));
-		var rated_star = card.firstElementChild.firstElementChild.firstElementChild;
+		var rated_star = card.children[1].firstElementChild.firstElementChild;
+		// updating the card's class name to hold the rating of the card
+		card.className = "mentee-card " + card_info.rating_value;
+		card.children[1].firstElementChild.title = rating_comment[card_info.rating_value];
 		// coloring the stars
 		for (var i = 1; i <= card_info.rating_value; i++, rated_star=rated_star.nextElementSibling) {
 			rated_star.style.color = "chocolate";
@@ -221,27 +260,20 @@ function DELETEorDISCARD(delete_discard_btn) {
 		for (var i = 1; i <= 5-card_info.rating_value; i++, rated_star=rated_star.nextElementSibling) {
 			rated_star.style.color = "black";
 		}
-		// updating the span.rating-value's id
-		card.firstElementChild.lastElementChild.id = card_info.rating_value;
 		// updating the textarea content
 		review_textarea.value = card_info.review;
 		// updating the bg with respective color
-		if (card_info.rating_value !== "0") {
-			card.style.backgroundColor = rating_colors[card_info.rating_value-1];
-		} 
-		else {
-			card.style.backgroundColor = "lightgrey";
-		}
+		card.style.backgroundColor = rating_colors[card_info.rating_value];
 		// increasing the card max-height, this allows the rating stars to be visible
-		card.style.maxHeight = "335px"; 
+		card.style.maxHeight = cardDimension.expanded_height; 
 		// hex code for Multiplication (cross) symbol
-		delete_discard_btn.innerHTML = "&#x2715;";
+		delete_discard_btn.innerHTML = glyphicon.delete;
 		delete_discard_btn.title = "Delete Card";
 		// hex code for pencil symbol
-		edit_save_btn.innerHTML = "&#x270E;"; 
+		edit_save_btn.innerHTML = glyphicon.edit; 
 		edit_save_btn.title = "Edit Card";
 		// hex code for minimize symbol
-		min_max_btn.innerHTML = "&#x1f5d5;"; 
+		min_max_btn.innerHTML = glyphicon.minimize; 
 		min_max_btn.title = "Minimize Card";
 		// the minimize btn is visible after editing is over
 		min_max_btn.style.visibility = "visible"; 
@@ -251,17 +283,28 @@ function DELETEorDISCARD(delete_discard_btn) {
 		
 }
 
+function colorPreceedingStars(star) {
+	for(; star != null;star = star.previousElementSibling) {
+		star.style.color = "steelblue";
+		star.style.cursor = "pointer";
+	}
+}
+function uncolorPreceedingStars(star) {
+	for(; star != null;star = star.previousElementSibling) {
+		star.style.color = "black";
+		star.style.cursor = "default";
+	}
+}
 function registerRating(event) {
 	// the node (in this case star) that was clicked on
 	var rating_star = event.target; 
-	// value of the rating obtained from the id of the node (star)
-	var rating_value = rating_star.id[rating_star.id.length-1]; 
+	// value of the rating obtained from the class of the node (star)
+	var rating_value = rating_star.className[rating_star.className.length-1]; 
 	var card = rating_star.parentNode.parentNode.parentNode;
-	var card_titlebar = card.firstElementChild;
-	var equivalent_rated_star = card_titlebar.firstElementChild.children[rating_value-1];
-	var rating_value_span = card_titlebar.lastElementChild;
-	// span.rating-value's id is updated
-	rating_value_span.id = rating_value;
+	var equivalent_rated_star = card.children[1].firstElementChild.children[rating_value-1];
+	// updating the span's class name to hold the rating of the card
+	card.className = "mentee-card " + rating_value;
+	card.children[1].firstElementChild.title = rating_comment[rating_value];
 	// coloring the stars in the titlebar
 	for (var s = equivalent_rated_star,i = rating_value-1; i >= 0; i--, s = s.previousElementSibling) {
 		s.style.color = "chocolate" ;
@@ -270,7 +313,7 @@ function registerRating(event) {
 		s.style.color = "black" ;
 	}
 	// updating the bg with resp color
-	card.style.backgroundColor = rating_colors[rating_value-1];
+	card.style.backgroundColor = rating_colors[rating_value];
 }
 
 function deleteAll() {
@@ -292,19 +335,17 @@ function deleteAll() {
 }
 
 function sort() {
-	alert("sorting functionality not yet added");
-/*
 	// temp array for sorting
 	var sorted_mentee_name_list = [];
-	// remove all cards from DOM first
-	for (var i = mentee_name_list.length-1,card; i >= 0; i--) {
+	// removing all cards from DOM
+	for (var i = 0,card; i < mentee_name_list.length; i++) {
 		// copying the names into temp array
 		sorted_mentee_name_list[i] = mentee_name_list[i];
-		card = document.getElementById(mentee_name_list[i]);
 		// removing the card
+		card = document.getElementById(mentee_name_list[i]);
 		card.parentNode.removeChild(card);
 	}
-	// sorting the name list using buble sort
+	// sorting the name list using bubble sort
 	for (var i = 0 ; i < sorted_mentee_name_list.length-1 ; i++) {
 		for (var j = 0,temp ; j < sorted_mentee_name_list.length-1-i ; j++) {
 			if(JSON.parse(localStorage.getItem(sorted_mentee_name_list[j])).rating_value < JSON.parse(localStorage.getItem(sorted_mentee_name_list[j+1])).rating_value) {
@@ -314,10 +355,13 @@ function sort() {
 			}
 		}
 	}
-	console.log(sorted_mentee_name_list.toString());
 	// creating cards in the order of sorted name list
 	for (var i = 0 ; i < sorted_mentee_name_list.length ; i++) {
 		createCard(sorted_mentee_name_list[i],localStorage.getItem(sorted_mentee_name_list[i]));
 	}
-*/	
+	
+}
+
+function searchCard() {
+	alert("search successful");
 }

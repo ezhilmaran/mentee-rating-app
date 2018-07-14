@@ -2,10 +2,12 @@ body {
 	/* to avoid horizontal overflow */
 	overflow-x: hidden;
 	/* CSS variables */
-	--smooth-edge-radius: 15px;
+	--smooth-edge-radius: 14px;
+	--main-font-size : 25px;
 	
 	--margin-thickness: 10px;
-	--half-margin-thickness: 5px;
+	--half-margin-thickness: calc(var(--margin-thickness) / 2) ;
+	--padding-thickness: 10px;
 	
 	--minimized-card-height: 70px;
 	--card-titlebar-height: calc(var(--minimized-card-height) - calc(2*var(--margin-thickness))); 
@@ -29,10 +31,10 @@ body {
 	position: fixed;
 	bottom: 50px;
 	
-	font-size: 30px;
+	font-size: var(--main-font-size);
 	/* 1.5 times it's font-size */
-	height: 1.5em; 
-	width: 1.5em;
+	height: 2em; 
+	width: 2em;
 	/* circular button */
 	border-radius: 50%; 
 }
@@ -60,22 +62,41 @@ body {
 }
 #sortButton {
 	/* browser center align */
-	right: calc(50% - calc(1.5em / 2));
+	right: calc(50% - calc(2em / 2));
 	background-color: darkseagreen;
 }
 #sortButton:hover {
 	background-color: darkturquoise;
 }
 
+/* for screen width less than 1200px */
+@media only screen and (max-width: 1200px) {
+	.mentee-card {
+		width: calc(100% - calc(2*var(--margin-thickness))); 
+	}
+}
+/* for screen width greater than 1200px and less than 1800px*/
+@media only screen and (min-width: 1200px) {
+	.mentee-card {
+		width: calc(50% - calc(2*var(--margin-thickness))); 
+	}
+}
+/* for screen width greater than 1800px */
+@media only screen and (min-width: 1800px) {
+	.mentee-card {
+		width: calc(33.33% - calc(2*var(--margin-thickness))); 
+	}
+}
 .mentee-card {
+	position: relative;
 	display: inline-block;
- 	width: calc(100% - calc(2*var(--margin-thickness))); 
  	/* initial card height */
 	max-height: var(--minimized-card-height);
 	/* vertical margins add up */
 	margin: var(--half-margin-thickness) var(--margin-thickness) var(--half-margin-thickness) var(--margin-thickness);
 	border-radius: var(--smooth-edge-radius); 
 	
+	float: left;
 	overflow: hidden;
 
 	background-color: lightgrey;
@@ -103,6 +124,19 @@ body {
 	-webkit-transition: max-height .75s;
 }
 
+.pin-card-btn {
+	position: absolute;
+	left: var(--half-margin-thickness);
+	top: var(--half-margin-thickness);
+
+	height: calc(var(--card-btn-height) / 2);
+	width: calc(var(--card-btn-width) / 2);
+
+	font-size: calc(var(--main-font-size) / 2);
+	background-color: gray;
+	border-radius: 50%;
+}
+
 .card-titlebar {
 	display: inline-block;
 	height: var(--card-titlebar-height);
@@ -116,7 +150,7 @@ body {
 	line-height: var(--card-titlebar-height); 
 
 	overflow: hidden; 
-	font-size: 25px;
+	font-size: var(--main-font-size);
 	background-color: darkgrey;  
 }
 .card-titlebar:hover {
@@ -125,7 +159,7 @@ body {
 
 .card-btn {
 	margin: var(--margin-thickness) var(--margin-thickness) var(--margin-thickness) 0px;
-	font-size: 30px;
+	font-size:var(--main-font-size);
 	height: var(--card-btn-height);
 	width: var(--card-btn-width);
 	border-radius: var(--smooth-edge-radius);	
@@ -140,7 +174,7 @@ body {
 }
 .delete-card-discard-changes-btn {
 	position: absolute;
-	right: var(--margin-thickness); 	
+	right: 0px; 	
 	background-color: darkgrey;
 }
 .delete-card-discard-changes-btn:hover {
@@ -148,7 +182,7 @@ body {
 }
 .edit-card-save-changes-btn {
 	position: absolute;
-	right: calc(var(--card-btn-width) + 2*var(--margin-thickness)); 	
+	right: calc(var(--card-btn-width) + var(--margin-thickness)); 	
 	background-color: darkgrey;
 }
 .edit-card-save-changes-btn:hover {
@@ -156,7 +190,7 @@ body {
 }
 .maximize-minimize-card-btn {
 	position: absolute;
-	right: calc(2*var(--card-btn-width) + 3*var(--margin-thickness));  	
+	right: calc(2*var(--card-btn-width) + 2*var(--margin-thickness));  	
 	background-color: darkgrey;
 }
 .maximize-minimize-card-btn:hover {
@@ -169,21 +203,14 @@ body {
 }
 .card-textarea {
 	resize: none;
+
+	height: calc(250px - 2*var(--padding-thickness)); 
+	width: calc(100% - calc(2*var(--margin-thickness) + 2*var(--padding-thickness)));
+
+	padding: var(--padding-thickness) var(--padding-thickness) var(--padding-thickness) var(--padding-thickness);
 	margin: 0px var(--margin-thickness) var(--margin-thickness) var(--margin-thickness);
-	height: 250px; 
-	width: calc(100% - calc(2*var(--margin-thickness)));
 	border-radius: calc(var(--smooth-edge-radius) / 2);
+	
 	background-color: darkgrey;
-	font-size: 15px;
-}
-/* when hovered over an element of the class 'rating-stars', apply this css to all it's children belonging to the class 'rating-star' */
-.rating-stars:hover .rating-star {
-	color: steelblue;
-	cursor: pointer;
-}
-/* what this does is, when we hover over an element of class 'rating-star' it applies this css to all the elder siblings of the class 
-   'rating-star'. i want to light up all the stars before the one being pointed at, so i light up all the stars when hovered over the
-   parent using the previous css code and darken all the other succeeding stars using this css */
-.rating-star:hover ~ .rating-star {
-	color: black;
+	font-size: calc(2*var(--main-font-size)/3);
 }
