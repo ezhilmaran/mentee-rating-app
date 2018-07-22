@@ -360,7 +360,3 @@ function sort() {
 	}
 	
 }
-
-function searchCard() {
-	alert("search successful");
-}
