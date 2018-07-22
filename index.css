@@ -2,17 +2,17 @@ body {
 	/* to avoid horizontal overflow */
 	overflow-x: hidden;
 	/* CSS variables */
-	--smooth-edge-radius: 14px;
+	--smooth-edge-radius: 15px;
 	--main-font-size : 25px;
 	
 	--margin-thickness: 10px;
 	--half-margin-thickness: calc(var(--margin-thickness) / 2) ;
-	--padding-thickness: 10px;
+	--padding-thickness: 15px;
 	
 	--minimized-card-height: 70px;
 	--card-titlebar-height: calc(var(--minimized-card-height) - calc(2*var(--margin-thickness))); 
-	--card-btn-height: var(--card-titlebar-height);
 	/* square buttons */
+	--card-btn-height: var(--card-titlebar-height);
 	--card-btn-width : var(--card-btn-height);
 
 }

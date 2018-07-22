@@ -1,5 +1,3 @@
-/* to avoid typos becoming a variable, cuz in js a non-keyword without a declaration is also considered a variable
-   eg : var x = 5; is same as just x = 5; */
 'use strict'
 // card dimensions
 var cardDimension = {
@@ -15,7 +13,8 @@ var glyphicon = {
 	save:"&#x2713;",
     delete:"&#x2715;",
 	discard:"&#x2717;",
-	pin:"&#x1f4cc;"
+	pin:"&#x1f4cc;",
+	star:"&#x2605;"
 };
 
 var rating_comment = ["Note Yet Rated","Poor","Below Average","Average","Good","Very Good"]; 
@@ -73,27 +72,27 @@ function createCard(mentee_name,card_info) {
 	card_info = JSON.parse(card_info);
 	// the card div also belongs to the class equivalent to the rating of the card i.e 0 to 5
 	document.getElementById("cardContainer").innerHTML += "<div id='" + mentee_name + "' class='mentee-card " + card_info.rating_value + "'>\
-																<button class='pin-card-btn' title='Pin Card' onclick='PINorUNPINcard(this)' onmouseover='prepareToPINcard(this)' onmouseout='reversePINPreparation(this)'>" + glyphicon.pin + "</button>\
+																<button class='pin-card-btn' title='Pin Card' onclick='PINorUNPINcard(this)' onmouseover='prepareToPINcard(this)' onmouseout='reversePINPreparation(this)'></button>\
 																<div class='card-titlebar'>" + mentee_name + " &#x2012\
 																	<span class='rated-stars' title='Note Yet Rated'>\
-																		<span class='rated-star star-1'>&#x2605</span>\
-																		<span class='rated-star star-2'>&#x2605</span>\
-																		<span class='rated-star star-3'>&#x2605</span>\
-																		<span class='rated-star star-4'>&#x2605</span>\
-																		<span class='rated-star star-5'>&#x2605</span>\
+																		<span class='rated-star star-1'>" + glyphicon.star + "</span>\
+																		<span class='rated-star star-2'>" + glyphicon.star + "</span>\
+																		<span class='rated-star star-3'>" + glyphicon.star + "</span>\
+																		<span class='rated-star star-4'>" + glyphicon.star + "</span>\
+																		<span class='rated-star star-5'>" + glyphicon.star + "</span>\
 																	<span/>\
 																</div>\
-																<button class='maximize-minimize-card-btn card-btn' title='Maximize Card' onclick='MAXIMIZEorMINIMIZEcard(this)'>&#x26F6;</button>\
-																<button class='edit-card-save-changes-btn card-btn' title='Edit Card' onclick='EDITorSAVE(this)'>&#x270E;</button>\
-																<button class='delete-card-discard-changes-btn card-btn' title='Delete Card' onclick='DELETEorDISCARD(this)'>&#x2715;</button>\
+																<button class='maximize-minimize-card-btn card-btn' title='Maximize Card' onclick='MAXIMIZEorMINIMIZEcard(this)'>" + glyphicon.maximize + "</button>\
+																<button class='edit-card-save-changes-btn card-btn' title='Edit Card' onclick='EDITorSAVE(this)'>" + glyphicon.edit + "</button>\
+																<button class='delete-card-discard-changes-btn card-btn' title='Delete Card' onclick='DELETEorDISCARD(this)'>" + glyphicon.delete + "</button>\
 																<div class='editable-content'>\
 																	<textarea class='card-textarea' readOnly>" + card_info.review + "</textarea>\
 																	<span class='rating-stars' onclick='registerRating(event)'>\
-																		<span class='rating-star star-1' title='Poor' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
-																		<span class='rating-star star-2' title='Below Average' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
-																		<span class='rating-star star-3' title='Average' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
-																		<span class='rating-star star-4' title='Good'  onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
-																		<span class='rating-star star-5' title='Very Good' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>&#x2605</span>\
+																		<span class='rating-star star-1' title='Poor' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>" + glyphicon.star + "</span>\
+																		<span class='rating-star star-2' title='Below Average' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>" + glyphicon.star + "</span>\
+																		<span class='rating-star star-3' title='Average' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>" + glyphicon.star + "</span>\
+																		<span class='rating-star star-4' title='Good'  onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>" + glyphicon.star + "</span>\
+																		<span class='rating-star star-5' title='Very Good' onmouseover='colorPreceedingStars(this)' onmouseout='uncolorPreceedingStars(this)'>" + glyphicon.star + "</span>\
 																	</span>\
 																</div>\
 														   </div>";
@@ -142,12 +141,12 @@ function PINorUNPINcard(pin_btn) {
 }	
 function prepareToPINcard(pin_btn) {
 	if (pin_btn.title == "Pin Card") {
-		pin_btn.style.backgroundColor = "mediumpurple";
+		pin_btn.innerHTML = glyphicon.pin;
 	}
 }	
 function reversePINPreparation(pin_btn) {
 	if (pin_btn.title == "Pin Card") {
-		pin_btn.style.backgroundColor = "gray";
+		pin_btn.innerHTML = "";
 	}
 }				
 
