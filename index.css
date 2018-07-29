@@ -214,3 +214,7 @@ body {
 	background-color: darkgrey;
 	font-size: calc(2*var(--main-font-size)/3);
 }
+
+.rating-star {
+	margin: none;
+}
